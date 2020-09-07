@@ -40,7 +40,7 @@
   - name: Define Installer path "{{ mount_path }}/{{ installer_name }}"
     set_fact:
       pkg_path: "{{ mount_path }}/{{ installer_name }}"
-    when: installer_name != ''
+    when: installer_name | length > 0
   # end block
   when: installer_type == 'installer'
 
@@ -54,7 +54,7 @@
   - name: Define exec path to "{{ mount_path }}/{{ installer_name }}"
     set_fact:
       pkg_path: "{{ mount_path }}/{{ installer_name }}"
-    when: installer_name != ''
+    when: installer_name | length > 0
   # end block
   when: installer_type == 'pkg'
 
