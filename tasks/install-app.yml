@@ -36,11 +36,11 @@
 
 - debug:
     msg: "The desired version for '{{ app_name }}' is '{{ version }}'"
-  when: version !=''
+  when: version | length > 0
 
 - debug:
     msg: "The desired version for '{{ app_name }}' was not specified. Will overwrite any existing version"
-  when: version == ''
+  when: version | length == 0
 
 - debug:
     msg: "'{{ app_basename }}' does not exist in '{{ dest }}'. '{{ app_name }}' will be installed"
@@ -52,7 +52,7 @@
             version_app_default='0.01'
             version_app_plist_tag='{{ plist_tag }}'
             "
-  when: version !='' and app is defined and app.stat.exists
+  when: version | length > 0 and app is defined and app.stat.exists
 
 - block:
     - name: Required version
@@ -69,12 +69,12 @@
   # end block
   when:
     - verbose|bool
-    - version !='' and app is defined and app.stat.exists
+    - version | length > 0 and app is defined and app.stat.exists
 
 - name: Already up-to-date!
   debug:
     msg: "Application {{ app_name }} already up-to-date (Current {{ currentversion }} >= Desired {{ version }})"
-  when: app.stat.exists is defined and app.stat.exists and version !='' and version is version( currentversion, '<=')
+  when: app.stat.exists is defined and app.stat.exists and version | length > 0 and version is version( currentversion, '<=')
 
 - name: Download macOS App archive '{{ app_archive }}'
   get_url:
@@ -82,11 +82,11 @@
     dest: "{{ pkg_path }}"
     mode: '0644'
     validate_certs: "{{ validate_certs }}"
-    sha256sum: "{{ omit if (checksum is not defined or checksum == '') }}"
+    sha256sum: "{{ omit if (checksum is not defined or checksum | length == 0) }}"
     tmp_dest: /tmp/
   vars:
     ansible_python_interpreter: python3
-  when: (app.stat.exists is defined and not app.stat.exists) or version == '' or version is version( currentversion, '>')
+  when: (app.stat.exists is defined and not app.stat.exists) or version | length == 0 or version is version( currentversion, '>')
 
 - include: archive-install.yml
   when: (app.stat.exists is defined and not app.stat.exists) or version =='' or version is version( currentversion, '>')

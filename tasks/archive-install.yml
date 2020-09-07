@@ -35,7 +35,7 @@
     # Actions for `installer` type
   - fail:
       msg: "'exec_name' (installer name), must be set to the installer path"
-    when: installer_name == ''
+    when: installer_name | length == 0
 
   - name: Define Installer path "{{ mount_path }}/{{ installer_name }}"
     set_fact:
@@ -49,7 +49,7 @@
   - name: Define package path inside the mountpoint to "{{ mount_path }}/{{ app_name }}.pkg"
     set_fact:
       pkg_path: "{{ mount_path }}/{{ app_name }}.pkg"
-    when: installer_name == ''
+    when: installer_name | length == 0
 
   - name: Define exec path to "{{ mount_path }}/{{ installer_name }}"
     set_fact:

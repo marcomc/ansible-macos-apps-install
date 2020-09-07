@@ -25,7 +25,7 @@
         version_app_cmd: "echo {{ version_app_default }}"
       when: not infoplist.stat.exists
 
-  when: version_app_cmd is not defined or version_app_cmd == ''
+  when: version_app_cmd is not defined or version_app_cmd | length == 0
 
 - name: Get current App version of {{ version_app_path }}
   shell: "{{ version_app_cmd }}"
